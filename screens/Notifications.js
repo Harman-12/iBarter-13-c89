@@ -7,6 +7,8 @@ import * as firebase from 'firebase'
 import 'firebase/firestore';
 import db from '../config';
 
+import SwipeableFlatlist from '../components/SwipeableFlatlist';
+
 export default class Notifications extends Component{
   constructor(props) {
     super(props);
@@ -65,7 +67,7 @@ export default class Notifications extends Component{
     return(
       <View style={styles.container}>
         <View style={{flex:0.1}}>
-          <AppHeader/>
+          <AppHeader navigation ={this.props.navigation}/>
         </View>
         <View style={{flex:0.9}}>
           {
@@ -76,11 +78,7 @@ export default class Notifications extends Component{
               </View>
             )
             :(
-              <FlatList
-                keyExtractor={this.keyExtractor}
-                data={this.state.allNotifications}
-                renderItem={this.renderItem}
-              />
+              <SwipeableFlatlist allNotifications={this.state.allNotifications}/>
             )
           }
         </View>

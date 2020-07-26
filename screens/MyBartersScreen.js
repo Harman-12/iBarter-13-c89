@@ -129,7 +129,7 @@ export default class MyBartersScreen extends Component {
    render(){
      return(
        <View style={{flex:1}}>
-         <AppHeader/>
+         <AppHeader navigation ={this.props.navigation}/>
          <View style={{flex:1}}>
            {
              this.state.allBarters.length === 0

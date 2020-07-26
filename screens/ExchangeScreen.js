@@ -12,7 +12,11 @@ export default class ExchangeScreen extends Component{
     this.state = {
       userName : firebase.auth().currentUser.email,
       itemName : "",
-      description : ""
+      description : "",
+      requestedItemName:"",
+      exchangeId:"",
+      itemStatus:"",
+      docId: ""
     }
   }
 
@@ -27,17 +31,25 @@ export default class ExchangeScreen extends Component{
       'username' : userName,
       'item_name': itemName,
       'description' : description,
-      'exchangeId'  : exchangeId
+      'exchangeId'  : exchangeId,
+      "item_status" : "requested",
+      "date"       : firebase.firestore.FieldValue.serverTimestamp()
      })
      .catch(function(error) {
         console.error("Error adding document: ", error);
     });
-    
-     this.setState({
-       itemName : '',
-       description :''
-     })
 
+    this.getExchangeRequest()
+     db.collection('users').where("username","==",userName).get()
+      .then()
+      .then((snapshot)=>{
+        snapshot.forEach((doc)=>{
+          db.collection('users').doc(doc.id).update({
+        IsExchangeRequestActive: true
+        })
+      })
+    })
+    
      this.setState({
        itemName : '',
        description :''
@@ -55,12 +67,132 @@ export default class ExchangeScreen extends Component{
       );
   }
 
+    getIsExchangeRequestActive(){
+      db.collection('users')
+      .where('username','==',this.state.userName)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          this.setState({
+            IsExchangeRequestActive:doc.data().IsExchangeRequestActive,
+            userDocId : doc.id
+          })
+        })
+      })
+    }
 
+    getExchangeRequest =()=>{
+    db.collection('exchange_requests')
+      .where('username','==',this.state.userName)
+      .get()
+      .then((snapshot)=>{
+        snapshot.forEach((doc)=>{
+          if(doc.data().item_status !== "received"){
+            this.setState({
+              exchangeId : doc.data().exchangeId,
+              requestedItemName: doc.data().item_name,
+              itemStatus:doc.data().item_status,
+              docId     : doc.id
+            })
+          }
+        })
+    })
+  }
+
+  componentDidMount(){
+    this.getExchangeRequest()
+    this.getIsExchangeRequestActive()
+  }
+
+  receivedItem=(itemName)=>{
+    var userId = this.state.userName
+    var exchangeId = this.state.exchangeId
+    db.collection('received_items').add({
+        "user_id": userId,
+        "item_name":itemName,
+        "exchange_id"  : exchangeId,
+        "itemStatus"  : "received",
+
+    })
+  }
+
+  updateExchangeRequestStatus=()=>{
+    db.collection('requested_requests').doc(this.state.docId)
+    .update({
+      item_status : 'recieved'
+  })
+
+  db.collection('users').where('username','==',this.state.userName).get()
+    .then((snapshot)=>{
+      snapshot.forEach((doc) => {
+        //updating the doc
+        db.collection('users').doc(doc.id).update({
+          IsExchangeRequestActive: false
+        })
+      })
+    })
+
+}
+
+  sendNotification=()=>{
+    //to get the first name and last name
+    db.collection('users').where('username','==',this.state.userName).get()
+    .then((snapshot)=>{
+      snapshot.forEach((doc)=>{
+        var name = doc.data().first_name
+        var lastName = doc.data().last_name
+
+        // to get the donor id and item name
+        db.collection('all_notifications').where('exchangeId','==',this.state.exchangeId).get()
+        .then((snapshot)=>{
+          snapshot.forEach((doc) => {
+            var donorId  = doc.data().donor_id
+            var itemName =  doc.data().item_name
+
+            //targert user id is the donor id to send notification to the user
+            db.collection('all_notifications').add({
+              "targeted_user_id" : donorId,
+              "message" : name +" " + lastName + " received the item " + itemName ,
+              "notification_status" : "unread",
+              "item_name" : itemName
+            })
+          })
+        })
+      })
+    })
+  }
 
   render(){
+    
+      if (this.state.IsExchangeRequestActive === true){
+       
+        return(
+          <View style = {{flex:1,justifyContent:'center'}}>
+           <View style={{borderColor:"orange",borderWidth:2,justifyContent:'center',alignItems:'center',padding:10,margin:10}}>
+           <Text>Item Name</Text>
+           <Text>{this.state.requestedItemName}</Text>
+           </View>
+           <View style={{borderColor:"orange",borderWidth:2,justifyContent:'center',alignItems:'center',padding:10,margin:10}}>
+           <Text> Item Status </Text>
+  
+           <Text>{this.state.itemStatus}</Text>
+           </View>
+  
+           <TouchableOpacity style={{borderWidth:1,borderColor:'orange',backgroundColor:"orange",width:300,alignSelf:'center',alignItems:'center',height:30,marginTop:30}}
+           onPress={()=>{
+             this.sendNotification()
+             this.updateExchangeRequestStatus();
+             this.receivedItem(this.state.requestedItemName)
+           }}>
+           <Text>I recieved the Item</Text>
+           </TouchableOpacity>
+         </View>
+       )
+  
+      }
+      else {
     return(
       <View style={{flex:1}}>
-      <AppHeader/>
+      <AppHeader navigation ={this.props.navigation}/>
       <KeyboardAvoidingView style={{flex:1,justifyContent:'center', alignItems:'center'}}>
         <TextInput
           style={styles.formTextInput}
@@ -96,6 +228,7 @@ export default class ExchangeScreen extends Component{
       </View>
     )
   }
+}
 }
 
 
