@@ -36,8 +36,8 @@ export default class HomeScreen extends Component{
       <ListItem
         key={i}
         title={item.item_name}
-        subtitle={item.description}
-        description ={item.item_value}
+        subtitle={item.description + '\n' + 'Price:' + item.item_value }
+        description={item.item_value}
         titleStyle={{ color: 'blue', fontWeight: 'bold' }}
         subtitleStyle={{ color: 'orange' }}
         rightElement={
