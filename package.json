@@ -25,6 +25,7 @@
     "react-native-elements": "^2.0.4",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "^1.9.0",
+    "react-native-responsive-fontsize": "^0.4.3",
     "react-native-safe-modules": "^1.0.0",
     "react-native-screens": "^2.9.0",
     "react-native-swipe-list-view": "^3.2.3",
