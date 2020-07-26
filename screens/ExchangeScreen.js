@@ -16,7 +16,9 @@ export default class ExchangeScreen extends Component{
       requestedItemName:"",
       exchangeId:"",
       itemStatus:"",
-      docId: ""
+      docId: "",
+      itemValue:"",
+      currencyCode:""
     }
   }
 
@@ -33,6 +35,7 @@ export default class ExchangeScreen extends Component{
       'description' : description,
       'exchangeId'  : exchangeId,
       "item_status" : "requested",
+      "item_value"  : this.state.itemValue,
       "date"       : firebase.firestore.FieldValue.serverTimestamp()
      })
      .catch(function(error) {
@@ -52,7 +55,8 @@ export default class ExchangeScreen extends Component{
     
      this.setState({
        itemName : '',
-       description :''
+       description :'',
+       itemValue: ""
      })
 
      
@@ -74,7 +78,8 @@ export default class ExchangeScreen extends Component{
         querySnapshot.forEach(doc => {
           this.setState({
             IsExchangeRequestActive:doc.data().IsExchangeRequestActive,
-            userDocId : doc.id
+            userDocId : doc.id,
+            currencyCode: doc.data().currency_code
           })
         })
       })
@@ -91,6 +96,7 @@ export default class ExchangeScreen extends Component{
               exchangeId : doc.data().exchangeId,
               requestedItemName: doc.data().item_name,
               itemStatus:doc.data().item_status,
+              itemValue : doc.data().item_value,
               docId     : doc.id
             })
           }
@@ -98,9 +104,22 @@ export default class ExchangeScreen extends Component{
     })
   }
 
+  getValue(){
+    fetch("http://data.fixer.io/api/latest?access_key=30b9d3f9fc3e897b82537e51076e261f&format=1")
+    .then(response=>{
+      return response.json();
+    }).then(responseData =>{
+      var currencyCode = this.state.currencyCode
+      var currency = responseData.rates.INR
+      var value =  69 / currency
+      console.log(value);
+    })
+    }
+
   componentDidMount(){
     this.getExchangeRequest()
     this.getIsExchangeRequestActive()
+    this.getValue()
   }
 
   receivedItem=(itemName)=>{
@@ -172,6 +191,11 @@ export default class ExchangeScreen extends Component{
            <Text>{this.state.requestedItemName}</Text>
            </View>
            <View style={{borderColor:"orange",borderWidth:2,justifyContent:'center',alignItems:'center',padding:10,margin:10}}>
+           <Text> Item Value </Text>
+
+           <Text>{this.state.itemValue}</Text>
+           </View>
+           <View style={{borderColor:"orange",borderWidth:2,justifyContent:'center',alignItems:'center',padding:10,margin:10}}>
            <Text> Item Status </Text>
   
            <Text>{this.state.itemStatus}</Text>
@@ -218,6 +242,17 @@ export default class ExchangeScreen extends Component{
           value={this.state.description}
 
         />
+        <TextInput
+            style={styles.formTextInput}
+            placeholder ={"Item Value"}
+            maxLength ={8}
+            onChangeText={(text)=>{
+              this.setState({
+                itemValue: text
+              })
+            }}
+            value={this.state.itemValue}
+          />
         <TouchableOpacity
           style={[styles.button,{marginTop:10}]}
           onPress = {()=>{this.addItem(this.state.itemName, this.state.description)}}

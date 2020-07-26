@@ -37,6 +37,7 @@ export default class HomeScreen extends Component{
         key={i}
         title={item.item_name}
         subtitle={item.description}
+        description ={item.item_value}
         titleStyle={{ color: 'blue', fontWeight: 'bold' }}
         subtitleStyle={{ color: 'orange' }}
         rightElement={
