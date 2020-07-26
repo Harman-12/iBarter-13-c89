@@ -9,9 +9,6 @@ import MyBartersScreen from '../screens/MyBartersScreen';
 import Notifications from '../screens/Notifications';
 
 export const AppDrawerNavigation = createDrawerNavigator({
-  '-' : {
-    screen : bottomTabNavigator,
-    },
     Home : {
       screen : bottomTabNavigator,
     },

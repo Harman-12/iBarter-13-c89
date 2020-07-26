@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, Image, Modal, TouchableOpacity,TextInput, Alert, KeyboardAvoidingView, ScrollView } from 'react-native';
-import BarterAnimation from '../components/barterAnimation.js';
 import * as firebase from 'firebase'
 import 'firebase/firestore';
 import db from '../config';

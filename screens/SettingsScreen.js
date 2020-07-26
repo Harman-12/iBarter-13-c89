@@ -16,7 +16,8 @@ export default class SettingScreen extends Component{
       lastName:'',
       address:'',
       contact:'',
-      docId:''
+      docId:'',
+      image: ''
     }
   }
 
@@ -34,7 +35,8 @@ export default class SettingScreen extends Component{
          lastName:data.last_name,
          address:data.address,
          contact:data.mobile_number,
-         docId:doc.id
+         docId:doc.id,
+         image: data.image
        })
     });
   })

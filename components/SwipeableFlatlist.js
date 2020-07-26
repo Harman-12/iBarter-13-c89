@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import {
+    Animated,
+    Dimensions,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    View,
+    FlatList
+} from 'react-native';
 import { ListItem, Icon } from 'react-native-elements';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+import db from '../config';
+
 import * as firebase from 'firebase'
 import 'firebase/firestore';
-import db from '../config';
 
 
 export default class SwipeableFlatlist extends Component{
@@ -40,22 +49,27 @@ export default class SwipeableFlatlist extends Component{
 
 
 
-  renderItem = data => (
-  
-    <ListItem
+renderItem = data => ( 
+<View>
+      <ListItem
+        
         leftElement={<Icon name="bell" type="font-awesome" color ='orange'/>}
         title={data.item.item_name}
         titleStyle={{ color: 'blue', fontWeight: 'bold' }}
         subtitle={data.item.message}
         subtitleStyle={{ color: 'orange', fontWeight: 'bold' }}
         bottomDivider
-    />
-  );
+      />
+
+</View>
+    
+);
 
   renderHiddenItem = () => (
       <View style={styles.rowBack}>
           <View style={[styles.backRightBtn, styles.backRightBtnRight]}>
-              <Text style={styles.backTextWhite}></Text>
+              <Text style={styles.backTextWhite}>Delete</Text>
+              <Icon name="trash" type="font-awesome" size={28} color="white"/>
           </View>
       </View>
   );
@@ -80,7 +94,6 @@ export default class SwipeableFlatlist extends Component{
 
 }
 
-
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
@@ -93,7 +106,7 @@ const styles = StyleSheet.create({
     },
     rowBack: {
         alignItems: 'center',
-        backgroundColor: '#ed671f',
+        backgroundColor: 'blue',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -108,7 +121,7 @@ const styles = StyleSheet.create({
         width: 100,
     },
     backRightBtnRight: {
-        backgroundColor: '#ed671f',
+        backgroundColor: 'blue',
         right: 0,
     },
 });

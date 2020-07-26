@@ -31,11 +31,11 @@ export default class AppHeader extends Component{
       BellIconWithBadge=()=>{
         return(
           <View>
-            <Icon name='bell' type='font-awesome' color='#ff6100' size={25}
+            <Icon name='bell' type='font-awesome' color='blue' size={25}
               onPress={() =>this.props.navigation.navigate('Notifications')}/>
              <Badge
               value={this.state.value}
-              badgeStyle={{color: '#1111a1'}}
+              badgeStyle={{backgroundColor: '#ff6600'}}
              containerStyle={{ position: 'absolute', top: -4, right: -4 }}/>
           </View>
         )
@@ -48,7 +48,7 @@ export default class AppHeader extends Component{
                     containerStyle={{borderBottomColor:'blue', borderBottomWidth:2}}
                     placement="center"
                     backgroundColor = {'white'}
-                    leftComponent={<Icon name='bars' type='font-awesome' color='#696969' onPress={() => props.navigation.toggleDrawer()}/>}
+                    leftComponent={<Icon name='bars' type='font-awesome' color='blue' onPress={() => this.props.navigation.toggleDrawer()}/>}
                     rightComponent={<this.BellIconWithBadge {...this.props}/>}
                     centerComponent = {{
                         text : 'iBarter App',
